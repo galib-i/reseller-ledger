@@ -30,13 +30,13 @@ CREATE TABLE listings (
 );
 
 CREATE TABLE transactions (
-    id               SERIAL        PRIMARY KEY,
-    item_id          INT           NOT NULL REFERENCES items(id) ON DELETE CASCADE,
-    user_id          INT           NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    platform_id      INT           REFERENCES platforms(id) ON DELETE CASCADE,
-    type             TEXT          NOT NULL,
+    id               SERIAL         PRIMARY KEY,
+    item_id          INT            NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+    user_id          INT            NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    platform_id      INT            REFERENCES platforms(id) ON DELETE CASCADE,
+    type             TEXT           NOT NULL,
     value            DECIMAL(10, 2) NOT NULL,
     platform_fee     DECIMAL(10, 2),
     delivery_fee     DECIMAL(10, 2),
-    transaction_date DATE          NOT NULL
+    transaction_date DATE           NOT NULL
 );
