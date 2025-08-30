@@ -1,6 +1,7 @@
-package com.galibi.reseller_ledger;
+package com.galibi.resellerledger;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
