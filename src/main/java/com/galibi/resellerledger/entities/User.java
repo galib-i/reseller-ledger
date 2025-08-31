@@ -21,7 +21,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -58,8 +58,7 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public java.util.Collection<? extends org.springframework.security.core.GrantedAuthority> getAuthorities() {
-        return java.util.Collections.emptyList(); // There can only be one type of user- only one
-                                                  // role.
+        return java.util.Collections.emptyList(); // There can only be one type of user- one role.
     }
 
     @Override

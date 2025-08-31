@@ -7,9 +7,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.galibi.resellerledger.service.UserDetailsServiceImpl;
 
@@ -17,20 +19,26 @@ import com.galibi.resellerledger.service.UserDetailsServiceImpl;
 @Configuration
 public class SecurityConfig {
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private static final String[] PUBLIC_POST_ENDPOINTS = {"/api/users/**", "/api/auth/**"};
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+    private final UserDetailsServiceImpl userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService,
+            JwtAuthenticationFilter jwtAuthFilter) {
         this.userDetailsService = userDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/users", "/api/auth/login")
-                        .permitAll().anyRequest().authenticated());
-
-        return http.build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(
+                        auth -> auth.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
+                                .permitAll().anyRequest().authenticated())
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     @Bean
