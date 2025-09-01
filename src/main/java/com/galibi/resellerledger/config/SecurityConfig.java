@@ -1,5 +1,7 @@
 package com.galibi.resellerledger.config;
 
+import com.galibi.resellerledger.service.UserDetailsServiceImpl;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,46 +15,43 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.galibi.resellerledger.service.UserDetailsServiceImpl;
-
 
 @Configuration
 public class SecurityConfig {
 
-    private static final String[] PUBLIC_POST_ENDPOINTS = {"/api/users/**", "/api/auth/**"};
+  private static final String[] PUBLIC_POST_ENDPOINTS = {"/api/users/**", "/api/auth/**"};
 
-    private final UserDetailsServiceImpl userDetailsService;
-    private final JwtAuthenticationFilter jwtAuthFilter;
+  private final UserDetailsServiceImpl userDetailsService;
+  private final JwtAuthenticationFilter jwtAuthFilter;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService,
-            JwtAuthenticationFilter jwtAuthFilter) {
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthFilter = jwtAuthFilter;
-    }
+  public SecurityConfig(UserDetailsServiceImpl userDetailsService,
+      JwtAuthenticationFilter jwtAuthFilter) {
+    this.userDetailsService = userDetailsService;
+    this.jwtAuthFilter = jwtAuthFilter;
+  }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        auth -> auth.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
-                                .permitAll().anyRequest().authenticated())
-                .sessionManagement(
-                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
-    }
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http.csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
+            .permitAll().anyRequest().authenticated())
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
+  @Bean
+  public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+    AuthenticationManagerBuilder authenticationManagerBuilder =
+        http.getSharedObject(AuthenticationManagerBuilder.class);
+    authenticationManagerBuilder.userDetailsService(userDetailsService)
+        .passwordEncoder(passwordEncoder());
 
-        return authenticationManagerBuilder.build();
-    }
+    return authenticationManagerBuilder.build();
+  }
 }
