@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-  private static final String[] PUBLIC_POST_ENDPOINTS = {"/api/users/**", "/api/auth/**"};
+  private static final String[] PUBLIC_POST_ENDPOINTS = {"/api/users/**", "/api/auth/**", "/api/transactions/**"};
 
   private final UserDetailsServiceImpl userDetailsService;
   private final JwtAuthenticationFilter jwtAuthFilter;
