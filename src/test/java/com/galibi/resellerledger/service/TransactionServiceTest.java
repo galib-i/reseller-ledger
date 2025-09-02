@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import com.galibi.resellerledger.dto.LogTransactionDto;
 import com.galibi.resellerledger.entities.Item;
+import com.galibi.resellerledger.entities.Transaction;
 import com.galibi.resellerledger.entities.User;
 import com.galibi.resellerledger.repositories.ItemRepository;
 import com.galibi.resellerledger.repositories.TransactionRepository;
@@ -64,7 +65,7 @@ class TransactionServiceTest {
         .thenReturn(Optional.of(existingItem));
     when(transactionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-    com.galibi.resellerledger.entities.Transaction result = transactionService.logTransaction(dto);
+    Transaction result = transactionService.logTransaction(dto);
 
     assertNotNull(result);
     assertEquals(new BigDecimal("10.00"), result.getValue());

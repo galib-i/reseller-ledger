@@ -25,6 +25,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/items")
 public class ItemController {
 
+  @SuppressWarnings("unused")
   private final ItemRepository itemRepository;
   private final ItemService itemService;
 
